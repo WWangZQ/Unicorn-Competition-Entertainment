@@ -4,6 +4,7 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Sector } from 'recha
 interface Slice {
   label: string;
   value: number;
+  name?: string;
   color?: string;
 }
 
@@ -23,12 +24,14 @@ const PALETTE = [
 
 // Active shape that pops out on hover
 const ActiveSector = (props: any) => {
-  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props;
+  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload } = props;
   const midAngle = (startAngle + endAngle) / 2;
   const RADIAN = Math.PI / 180;
   const pop = 12;
   const dx = Math.cos(-RADIAN * midAngle) * pop;
   const dy = Math.sin(-RADIAN * midAngle) * pop;
+  const tx = cx + dx + Math.cos(-RADIAN * midAngle) * (outerRadius + 24);
+  const ty = cy + dy + Math.sin(-RADIAN * midAngle) * (outerRadius + 20);
 
   return (
     <g>
@@ -42,6 +45,14 @@ const ActiveSector = (props: any) => {
         fill={fill}
         style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.25))' }}
       />
+      <text x={tx} y={ty} textAnchor={tx > cx ? 'start' : 'end'} fill="#333" fontSize={13} fontWeight={600}>
+        {payload.label}
+      </text>
+      {payload.name && (
+        <text x={tx} y={ty + 16} textAnchor={tx > cx ? 'start' : 'end'} fill="#999" fontSize={11}>
+          {payload.name}
+        </text>
+      )}
     </g>
   );
 };
@@ -54,7 +65,8 @@ const CustomTooltip = ({ active, payload }: any) => {
         background: '#fff', border: '1px solid #e5e7eb', borderRadius: 8,
         padding: '10px 14px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', fontSize: 13,
       }}>
-        <div style={{ fontWeight: 600, marginBottom: 2 }}>{d.label}</div>
+        <div style={{ fontWeight: 600 }}>{d.label}</div>
+        {d.name && <div style={{ color: '#9ca3af', fontSize: 12, marginBottom: 2 }}>{d.name}</div>}
         <div style={{ color: '#6b7280' }}>{d.value} 人</div>
       </div>
     );
@@ -69,6 +81,7 @@ export default function Pie3D({ slices, size = 420 }: Props) {
     .filter((s) => s.value > 0)
     .map((s, i) => ({
       label: s.label,
+      name: s.name,
       value: s.value,
       color: s.color || PALETTE[i % PALETTE.length],
     }));
@@ -119,7 +132,7 @@ export default function Pie3D({ slices, size = 420 }: Props) {
             onMouseLeave={() => setHoverIndex(null)}
           >
             <span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: 2, background: d.color }} />
-            {d.label}
+            {d.label}{d.name ? ` ${d.name}` : ''}
           </span>
         ))}
       </div>

@@ -70,7 +70,7 @@ export default function StatsPage() {
           <Pie3D
             slices={distribution
               .filter((d) => d.count > 0)
-              .map((d) => ({ label: d.code, value: d.count }))}
+              .map((d) => ({ label: d.code, name: d.name, value: d.count }))}
             size={420}
           />
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center', marginTop: 16, maxWidth: 600, margin: '16px auto 0' }}>
