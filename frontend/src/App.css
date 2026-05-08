@@ -720,6 +720,13 @@ a:hover { color: var(--accent-hover); }
   font-family: var(--font-sans);
 }
 
+.dim-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  line-height: 1.4;
+}
+
 .dim-bar-wrap {
   flex: 1;
   display: flex;

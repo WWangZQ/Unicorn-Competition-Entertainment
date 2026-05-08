@@ -45,6 +45,14 @@ export default function ResultPage() {
         ) : null}
       </div>
 
+      {/* Personality description */}
+      {!isSpecial && result.personality?.description && (
+        <section className="analysis-box">
+          <h2>人格描述</h2>
+          <p>{result.personality.description}</p>
+        </section>
+      )}
+
       {/* Dimension breakdown */}
       <section className="result-dims">
         <h2 className="section-title">维度分析</h2>
@@ -58,7 +66,7 @@ export default function ResultPage() {
               <div key={id} className="dim-row">
                 <div className="dim-info">
                   <span className="dim-name">{dim.name}</span>
-                  <span className="dim-model">{dim.model}</span>
+                  <span className="dim-desc">{dim.levels[level]}</span>
                 </div>
                 <div className="dim-bar-wrap">
                   <div className="dim-bar">
