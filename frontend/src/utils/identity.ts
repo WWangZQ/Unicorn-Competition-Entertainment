@@ -88,6 +88,10 @@ export interface IdentityResult {
   personality_name: string;
   dimension_scores: string;
   created_at: string;
+  special_code?: string | null;
+  special_name?: string | null;
+  special_tagline?: string | null;
+  similarity?: number;
 }
 
 export async function fetchIdentityResults(identityId: string): Promise<IdentityResult[]> {

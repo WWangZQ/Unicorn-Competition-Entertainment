@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getHistory } from '../utils/storage';
-import { getIdentityId, fetchIdentityResults } from '../utils/identity';
+import { getIdentityId, getDeviceId, fetchIdentityResults } from '../utils/identity';
+import { specialPersonalities } from '../data/personalities';
 import type { HistoryEntry } from '../utils/storage';
 
 function formatDate(ts: number): string {
@@ -28,35 +29,36 @@ export default function HistoryPage() {
     fetchIdentityResults(identityId)
       .then((remote) => {
         // Convert remote results to HistoryEntry format
-        const remoteEntries: HistoryEntry[] = remote.map((r) => {
+        const remoteEntries: (HistoryEntry & { _deviceId: string })[] = remote.map((r) => {
           let dimensionScores: Record<string, number> = {};
           try { dimensionScores = JSON.parse(r.dimension_scores); } catch {}
+          const isSpecial = specialPersonalities.some((s) => s.code === r.personality_code);
           return {
             nickname: r.nickname,
-            personality: {
+            personality: isSpecial ? null : {
               code: r.personality_code,
               name: r.personality_name,
               tagline: '',
               description: '',
-              dimension: 'S1',
+              dimension: 'S1' as any,
               model: '',
               profile: dimensionScores,
             },
-            similarity: 0,
+            similarity: r.similarity ?? 0,
             dimensionScores,
-            specialCode: null,
-            specialName: null,
+            specialCode: isSpecial ? r.personality_code : null,
+            specialName: isSpecial ? r.personality_name : null,
             specialTagline: null,
             timestamp: new Date(r.created_at).getTime(),
+            _deviceId: r.device_id,
           };
         });
 
-        // Merge: local + remote, deduplicate by code+timestamp
+        // Merge: local + remote (exclude current device from remote, it's already in localStorage)
+        const myDeviceId = getDeviceId();
         const merged = [...local];
-        const localKeys = new Set(local.map((e) => `${e.personality?.code ?? e.specialCode}_${e.timestamp}`));
         remoteEntries.forEach((re) => {
-          const key = `${re.personality?.code ?? re.specialCode}_${re.timestamp}`;
-          if (!localKeys.has(key)) {
+          if ((re as any)._deviceId !== myDeviceId) {
             merged.push(re);
           }
         });
