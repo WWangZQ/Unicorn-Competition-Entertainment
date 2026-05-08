@@ -19,10 +19,7 @@ export default function Header() {
               <Link to="/" className="nav-link nav-link--exit">← 返回</Link>
             </>
           ) : (
-            <>
-              <Link to="/gallery" className="nav-link">图鉴</Link>
-              <Link to="/admin" className="nav-link nav-link--subtle">管理</Link>
-            </>
+            <Link to="/admin" className="nav-link nav-link--subtle">管理</Link>
           )}
         </nav>
       </div>
