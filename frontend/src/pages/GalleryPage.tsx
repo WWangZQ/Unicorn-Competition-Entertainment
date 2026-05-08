@@ -15,6 +15,9 @@ export default function GalleryPage() {
 
   return (
     <div className="page gallery-page">
+      <button className="btn btn--ghost" onClick={() => navigate(-1)} style={{ marginBottom: 16 }}>
+        ← 返回
+      </button>
       <h1 className="page-title">人格图鉴</h1>
       <p className="page-sub">
         {personalities.length} 种标准人格 + {specialPersonalities.length} 种特殊触发
