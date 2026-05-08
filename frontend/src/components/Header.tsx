@@ -16,6 +16,7 @@ export default function Header() {
           ) : (
             <>
               <Link to="/history" className="nav-link">记录</Link>
+              <Link to="/account" className="nav-link">账号</Link>
               <Link to="/admin" className="nav-link nav-link--subtle">管理</Link>
             </>
           )}

@@ -6,6 +6,7 @@ import ResultPage from './pages/ResultPage';
 import GalleryPage from './pages/GalleryPage';
 import PersonalityDetailPage from './pages/PersonalityDetailPage';
 import HistoryPage from './pages/HistoryPage';
+import AccountPage from './pages/AccountPage';
 import AdminLayout from './pages/admin/AdminLayout';
 import AdminGuard from './pages/admin/AdminGuard';
 import QuestionManager from './pages/admin/QuestionManager';
@@ -24,6 +25,7 @@ export default function App() {
           <Route path="/result" element={<ResultPage />} />
           <Route path="/gallery" element={<GalleryPage />} />
           <Route path="/history" element={<HistoryPage />} />
+          <Route path="/account" element={<AccountPage />} />
           <Route path="/types/:code" element={<PersonalityDetailPage />} />
           <Route path="/admin" element={<AdminGuard><AdminLayout /></AdminGuard>}>
             <Route index element={<QuestionManager />} />

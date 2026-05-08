@@ -28,6 +28,7 @@ export function submitResult(data: {
   personalityCode: string;
   personalityName: string;
   dimensionScores: Record<string, number>;
+  deviceId?: string;
 }): Promise<{ success: boolean }> {
   return request('/stats/submit', {
     method: 'POST',

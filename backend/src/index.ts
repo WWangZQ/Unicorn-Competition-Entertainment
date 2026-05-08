@@ -3,6 +3,7 @@ import cors from 'cors';
 import statsRouter from './routes/stats.js';
 import questionsRouter from './routes/questions.js';
 import personalitiesRouter from './routes/personalities.js';
+import identityRouter from './routes/identity.js';
 import { seedDefaults } from './seed.js';
 
 const app = express();
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use('/stats', statsRouter);
 app.use('/questions', questionsRouter);
 app.use('/personalities', personalitiesRouter);
+app.use('/identity', identityRouter);
 
 // Health check
 app.get('/', (_req, res) => {

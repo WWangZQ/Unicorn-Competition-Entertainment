@@ -4,6 +4,7 @@ import { questions, hiddenQuestions } from '../data/questions';
 import { computeResult } from '../utils/scoring';
 import { saveAnswers, saveResult, getNickname } from '../utils/storage';
 import { submitResult } from '../utils/api';
+import { getDeviceId } from '../utils/identity';
 import ProgressBar from '../components/ProgressBar';
 import QuestionCard from '../components/QuestionCard';
 
@@ -72,6 +73,7 @@ export default function QuizPage() {
           personalityCode: code,
           personalityName: name,
           dimensionScores: result.dimensionScores,
+          deviceId: getDeviceId(),
         }).catch(() => {}); // Silently fail if backend not available
 
         navigate('/result');

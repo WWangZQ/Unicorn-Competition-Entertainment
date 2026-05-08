@@ -4,7 +4,7 @@ import { addResult, getStats } from '../db.js';
 const router = Router();
 
 router.post('/submit', (req, res) => {
-  const { nickname, personalityCode, personalityName, dimensionScores } = req.body;
+  const { nickname, personalityCode, personalityName, dimensionScores, deviceId } = req.body;
 
   if (!personalityCode || !personalityName) {
     res.status(400).json({ error: 'Missing required fields' });
@@ -16,6 +16,7 @@ router.post('/submit', (req, res) => {
     personality_code: personalityCode,
     personality_name: personalityName,
     dimension_scores: JSON.stringify(dimensionScores ?? {}),
+    device_id: deviceId ?? '',
   });
 
   res.json({ success: true });
