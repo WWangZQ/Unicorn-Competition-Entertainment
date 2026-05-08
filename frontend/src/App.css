@@ -368,6 +368,102 @@ a:hover { color: var(--accent-hover); }
   margin-top: 40px;
 }
 
+/* ===== Analysis Box (Personality Description) ===== */
+.analysis-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-top: 8px;
+}
+
+.analysis-box h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.analysis-box p {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-muted);
+}
+
+/* ===== Dimension Box (Detail Page) ===== */
+.dim-box {
+  margin-top: 32px;
+}
+
+.dim-box h2 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.dim-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.dim-item:last-child {
+  border-bottom: none;
+}
+
+.dim-item-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.dim-item-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.dim-item-score {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 20px;
+  text-align: right;
+}
+
+.dim-item p {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* ===== Dimension Level Badges ===== */
+.dim-level {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 3px;
+  min-width: 20px;
+  text-align: center;
+}
+
+.dim-level--h {
+  background: rgba(217, 119, 6, 0.12);
+  color: var(--accent);
+}
+
+.dim-level--m {
+  background: rgba(107, 114, 128, 0.12);
+  color: var(--text-muted);
+}
+
+.dim-level--l {
+  background: rgba(156, 163, 175, 0.12);
+  color: var(--text-weak);
+}
+
 /* ===== Buttons ===== */
 .btn {
   display: inline-flex;

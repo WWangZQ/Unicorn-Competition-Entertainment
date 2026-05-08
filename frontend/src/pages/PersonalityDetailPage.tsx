@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { personalities, specialPersonalities } from '../data/personalities';
-import { ALL_DIMENSION_IDS, DIMENSIONS } from '../data/dimensions';
+import { ALL_DIMENSION_IDS, DIMENSIONS, scoreToLevel } from '../data/dimensions';
 import type { DimensionId } from '../data/dimensions';
 
 export default function PersonalityDetailPage() {
@@ -43,7 +43,6 @@ export default function PersonalityDetailPage() {
     );
   }
 
-  // Standard personality
   const dim = DIMENSIONS[personality!.dimension];
 
   return (
@@ -57,27 +56,27 @@ export default function PersonalityDetailPage() {
         </div>
       </div>
 
-      <section className="pd-profile">
-        <h2 className="section-title">理想维度分布</h2>
+      {/* Personality description */}
+      <section className="analysis-box">
+        <h2>人格描述</h2>
+        <p>{personality!.description}</p>
+      </section>
+
+      {/* Dimension portrait */}
+      <section className="dim-box">
+        <h2>维度画像</h2>
         <div className="dim-list">
           {ALL_DIMENSION_IDS.map((id: DimensionId) => {
             const d = DIMENSIONS[id];
             const score = personality!.profile[id];
+            const level = scoreToLevel(score);
             return (
-              <div key={id} className="dim-row">
-                <div className="dim-info">
-                  <span className="dim-name">{d.name}</span>
-                  <span className="dim-model">{d.model}</span>
+              <div key={id} className="dim-item">
+                <div className="dim-item-top">
+                  <div className="dim-item-name">{id} {d.name}</div>
+                  <div className="dim-item-score">{level}</div>
                 </div>
-                <div className="dim-bar-wrap">
-                  <div className="dim-bar">
-                    <div
-                      className="dim-fill"
-                      style={{ width: `${(score / 4) * 100}%` }}
-                    />
-                  </div>
-                  <span className="dim-score">{score}/4</span>
-                </div>
+                <p>{d.levels[level]}</p>
               </div>
             );
           })}

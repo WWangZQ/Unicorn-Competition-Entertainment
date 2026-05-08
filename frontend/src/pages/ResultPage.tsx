@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getLatestResult, getNickname } from '../utils/storage';
 import { getModelScores, getModelLabel } from '../utils/scoring';
-import { ALL_DIMENSION_IDS, DIMENSIONS } from '../data/dimensions';
+import { ALL_DIMENSION_IDS, DIMENSIONS, scoreToLevel } from '../data/dimensions';
 import ShareCard from '../components/ShareCard';
 import type { DimensionId } from '../data/dimensions';
 
@@ -52,6 +52,7 @@ export default function ResultPage() {
           {ALL_DIMENSION_IDS.map((id: DimensionId) => {
             const dim = DIMENSIONS[id];
             const score = result.dimensionScores[id];
+            const level = scoreToLevel(score);
             const maxScore = 4;
             return (
               <div key={id} className="dim-row">
@@ -66,6 +67,7 @@ export default function ResultPage() {
                       style={{ width: `${(score / maxScore) * 100}%` }}
                     />
                   </div>
+                  <span className={`dim-level dim-level--${level.toLowerCase()}`}>{level}</span>
                   <span className="dim-score">{score}/{maxScore}</span>
                 </div>
               </div>
