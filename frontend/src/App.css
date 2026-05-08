@@ -142,28 +142,20 @@ a:hover { color: var(--accent-hover); }
 /* ===== Hero (Home) ===== */
 .hero {
   text-align: center;
-  padding: 48px 0 32px;
+  padding: 40px;
+}
+
+.hero.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
 
 .hero-title {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  margin-bottom: 16px;
-}
-
-.hero-brand {
-  font-family: var(--font-sans);
-  font-size: 56px;
-  font-weight: 800;
-  letter-spacing: 2px;
-  color: var(--accent);
-}
-
-.hero-sub {
-  font-size: 20px;
-  color: var(--text-muted);
-  font-weight: 400;
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  line-height: 1.4;
 }
 
 .hero-desc {
@@ -1107,11 +1099,9 @@ a:hover { color: var(--accent-hover); }
 @media (max-width: 640px) {
   .main { padding: 16px 12px 48px; }
 
-  .hero { padding: 32px 0 24px; }
+  .hero { padding: 24px 20px; }
 
-  .hero-brand { font-size: 36px; letter-spacing: 2px; }
-
-  .hero-sub { font-size: 17px; }
+  .hero-title { font-size: 22px; }
 
   .hero-actions { flex-direction: column; align-items: center; }
 

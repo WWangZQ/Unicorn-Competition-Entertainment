@@ -19,12 +19,9 @@ export default function HomePage() {
 
   return (
     <div className="page home-page">
-      <section className="hero">
+      <section className="hero card">
         <div className="eyebrow">科广TI 人格测试 · 娱乐向</div>
-        <h1 className="hero-title">
-          <span className="hero-brand">科广TI</span>
-          <span className="hero-sub">你是哪种人格？</span>
-        </h1>
+        <h1 className="hero-title">科广TI — 你是哪种人格？</h1>
         <p className="hero-desc">
           30 道主线题 + 隐藏支线，五大模型十五维度交叉分析，为你匹配最贴合的人格标签。
           测试仅供娱乐，请勿当真。
