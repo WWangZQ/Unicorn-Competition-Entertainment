@@ -1,36 +1,20 @@
 import { useState, useEffect } from 'react';
 import { questions as defaultQuestions, hiddenQuestions as defaultHidden } from '../../data/questions';
-import type { Question } from '../../data/questions';
 import { DIMENSIONS } from '../../data/dimensions';
 
 export default function QuestionManager() {
-  const [mainQuestions, setMainQuestions] = useState<Question[]>([]);
-  const [hiddenQs, setHiddenQs] = useState<Question[]>([]);
-  const [editing, setEditing] = useState<Question | null>(null);
+  const [mainQuestions, setMainQuestions] = useState(defaultQuestions);
+  const [hiddenQs, setHiddenQs] = useState(defaultHidden);
   const [tab, setTab] = useState<'main' | 'hidden'>('main');
 
   useEffect(() => {
-    // Load from localStorage or defaults
     const stored = localStorage.getItem('kgti_admin_questions');
     if (stored) {
       const data = JSON.parse(stored);
       setMainQuestions(data.main ?? defaultQuestions);
       setHiddenQs(data.hidden ?? defaultHidden);
-    } else {
-      setMainQuestions(defaultQuestions);
-      setHiddenQs(defaultHidden);
     }
   }, []);
-
-  const save = (updated: Question[]) => {
-    if (tab === 'main') {
-      setMainQuestions(updated);
-      localStorage.setItem('kgti_admin_questions', JSON.stringify({ main: updated, hidden: hiddenQs }));
-    } else {
-      setHiddenQs(updated);
-      localStorage.setItem('kgti_admin_questions', JSON.stringify({ main: mainQuestions, hidden: updated }));
-    }
-  };
 
   const questions = tab === 'main' ? mainQuestions : hiddenQs;
 
@@ -52,7 +36,7 @@ export default function QuestionManager() {
       </div>
 
       <div className="admin-list">
-        {questions.map((q, i) => (
+        {questions.map((q) => (
           <div key={q.id} className="admin-item">
             <div className="admin-item-header">
               <span className="admin-item-id">{q.id}</span>

@@ -2,7 +2,6 @@ import { useRef } from 'react';
 import html2canvas from 'html2canvas';
 import type { QuizResult } from '../utils/scoring';
 import { getModelScores, getModelLabel } from '../utils/scoring';
-import { DIMENSIONS } from '../data/dimensions';
 
 interface Props {
   result: QuizResult;

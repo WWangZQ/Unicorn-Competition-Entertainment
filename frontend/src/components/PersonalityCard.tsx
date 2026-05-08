@@ -3,12 +3,11 @@ import { DIMENSIONS } from '../data/dimensions';
 
 interface Props {
   personality: Personality;
-  dimScores?: Record<string, number>;
   onClick?: () => void;
   highlight?: boolean;
 }
 
-export default function PersonalityCard({ personality, dimScores, onClick, highlight }: Props) {
+export default function PersonalityCard({ personality, onClick, highlight }: Props) {
   const dim = DIMENSIONS[personality.dimension];
 
   return (

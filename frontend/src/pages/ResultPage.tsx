@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getLatestResult, getNickname } from '../utils/storage';
-import { getModelScores, getModelLabel, getDimensionLabel } from '../utils/scoring';
+import { getModelScores, getModelLabel } from '../utils/scoring';
 import { ALL_DIMENSION_IDS, DIMENSIONS } from '../data/dimensions';
 import ShareCard from '../components/ShareCard';
 import type { DimensionId } from '../data/dimensions';
