@@ -62,11 +62,15 @@ export interface PersonalityRow {
   profile: string;
 }
 
+const DEFAULT_DB: DB = { results: [], questions: [], personalities: [], identities: [], deviceLinks: [] };
+
 function read(): DB {
   if (!fs.existsSync(dbFile)) {
-    return { results: [], questions: [], personalities: [], identities: [], deviceLinks: [] };
+    return structuredClone(DEFAULT_DB);
   }
-  return JSON.parse(fs.readFileSync(dbFile, 'utf-8'));
+  const raw = JSON.parse(fs.readFileSync(dbFile, 'utf-8'));
+  // Merge with defaults to handle new fields added in updates
+  return { ...DEFAULT_DB, ...raw };
 }
 
 function write(db: DB): void {
