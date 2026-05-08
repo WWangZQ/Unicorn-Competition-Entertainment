@@ -14,7 +14,7 @@ export default function ShareCard({ result, nickname }: Props) {
   const handleExport = async () => {
     if (!cardRef.current) return;
     const canvas = await html2canvas(cardRef.current, {
-      backgroundColor: '#1a1a1a',
+      backgroundColor: '#ffffff',
       scale: 2,
     });
     const url = canvas.toDataURL('image/png');

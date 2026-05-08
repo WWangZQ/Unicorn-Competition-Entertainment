@@ -1,17 +1,17 @@
 :root {
-  --bg: #1a1a1a;
-  --bg-card: #252525;
-  --bg-card-hover: #2a2a2a;
-  --border: #333;
+  --bg: #fafafa;
+  --bg-card: #fff;
+  --bg-card-hover: #f9fafb;
+  --border: #e5e7eb;
   --border-focus: #d97706;
   --accent: #d97706;
-  --accent-hover: #f59e0b;
-  --text: #e5e5e5;
-  --text-muted: #9ca3af;
-  --text-weak: #6b7280;
+  --accent-hover: #b45309;
+  --text: #1a1a1a;
+  --text-muted: #6b7280;
+  --text-weak: #9ca3af;
 
-  font: 15px/1.6 system-ui, -apple-system, sans-serif;
-  color-scheme: dark;
+  font: 15px/1.6 'Inter', system-ui, -apple-system, sans-serif;
+  color-scheme: light;
   color: var(--text);
   background: var(--bg);
   -webkit-font-smoothing: antialiased;
