@@ -115,6 +115,9 @@ export default function ResultPage() {
         <button className="btn btn--secondary" onClick={() => navigate('/gallery')}>
           查看图鉴
         </button>
+        <button className="btn btn--secondary" onClick={() => navigate('/history')}>
+          我的记录
+        </button>
       </div>
     </div>
   );

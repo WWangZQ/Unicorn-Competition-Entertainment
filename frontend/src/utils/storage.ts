@@ -38,8 +38,10 @@ export function saveResult(result: QuizResult): void {
   localStorage.setItem(KEYS.LATEST_RESULT, JSON.stringify(result));
   // Add to history
   const history = getHistory();
+  const nickname = getNickname() ?? '匿名';
   history.unshift({
     ...result,
+    nickname,
     timestamp: Date.now(),
   });
   // Keep last 20
@@ -53,6 +55,7 @@ export function getLatestResult(): QuizResult | null {
 }
 
 export interface HistoryEntry extends QuizResult {
+  nickname: string;
   timestamp: number;
 }
 
