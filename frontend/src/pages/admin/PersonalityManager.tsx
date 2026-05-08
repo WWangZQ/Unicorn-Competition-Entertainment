@@ -147,11 +147,11 @@ function ProfileEditor({ personality, onSave, onCancel }: {
         </label>
         <div>
           <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>维度分值 (0-4)</span>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 6, marginTop: 8 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 10, marginTop: 8 }}>
             {ALL_DIMENSION_IDS.map((dim) => (
-              <div key={dim} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                <span style={{ fontSize: 12, fontFamily: 'var(--font-mono)', minWidth: 32 }}>{dim}</span>
-                <input className="input" type="number" min={0} max={4} style={{ width: 48, textAlign: 'center', padding: '4px 8px' }} value={profile[dim]} onChange={(e) => setProfile({ ...profile, [dim]: Number(e.target.value) })} />
+              <div key={dim} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <span style={{ fontSize: 13, fontFamily: 'var(--font-mono)', minWidth: 36 }}>{dim}</span>
+                <input type="number" min={0} max={4} style={{ width: 56, textAlign: 'center', padding: '6px 8px', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', fontSize: 14, fontFamily: 'var(--font-mono)', outline: 'none' }} value={profile[dim]} onChange={(e) => setProfile({ ...profile, [dim]: Number(e.target.value) })} />
               </div>
             ))}
           </div>
