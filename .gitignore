@@ -1,4 +1,4 @@
 node_modules/
 dist/
-web/backend/data/
+backend/data/
 *.log
