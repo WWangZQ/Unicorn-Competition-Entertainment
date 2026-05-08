@@ -1,4 +1,5 @@
-import { useRef, useEffect } from 'react';
+import { useState } from 'react';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Sector } from 'recharts';
 
 interface Slice {
   label: string;
@@ -20,120 +21,108 @@ const PALETTE = [
   '#f97316', '#fb923c',
 ];
 
-export default function Pie3D({ slices, size = 400 }: Props) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+// Active shape that pops out on hover
+const ActiveSector = (props: any) => {
+  const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill } = props;
+  const midAngle = (startAngle + endAngle) / 2;
+  const RADIAN = Math.PI / 180;
+  const pop = 12;
+  const dx = Math.cos(-RADIAN * midAngle) * pop;
+  const dy = Math.sin(-RADIAN * midAngle) * pop;
 
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+  return (
+    <g>
+      <Sector
+        cx={cx + dx}
+        cy={cy + dy}
+        innerRadius={innerRadius}
+        outerRadius={outerRadius + 6}
+        startAngle={startAngle}
+        endAngle={endAngle}
+        fill={fill}
+        style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.25))' }}
+      />
+    </g>
+  );
+};
 
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width = size * dpr;
-    canvas.height = size * dpr;
-    canvas.style.width = `${size}px`;
-    canvas.style.height = `${size}px`;
+const CustomTooltip = ({ active, payload }: any) => {
+  if (active && payload && payload.length) {
+    const d = payload[0].payload;
+    return (
+      <div style={{
+        background: '#fff', border: '1px solid #e5e7eb', borderRadius: 8,
+        padding: '10px 14px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', fontSize: 13,
+      }}>
+        <div style={{ fontWeight: 600, marginBottom: 2 }}>{d.label}</div>
+        <div style={{ color: '#6b7280' }}>{d.value} 人</div>
+      </div>
+    );
+  }
+  return null;
+};
 
-    const ctx = canvas.getContext('2d')!;
-    ctx.scale(dpr, dpr);
+export default function Pie3D({ slices, size = 420 }: Props) {
+  const [hoverIndex, setHoverIndex] = useState<number | null>(null);
 
-    const total = slices.reduce((s, sl) => s + sl.value, 0) || 1;
-    const cx = size / 2;
-    const cy = size * 0.45;
-    const radius = size * 0.35;
-    const depth = size * 0.08;
-
-    // Assign colors
-    const data = slices.map((s, i) => ({
-      ...s,
+  const data = slices
+    .filter((s) => s.value > 0)
+    .map((s, i) => ({
+      label: s.label,
+      value: s.value,
       color: s.color || PALETTE[i % PALETTE.length],
     }));
 
-    // Draw the 3D extrusion (cylinder wall)
-    let startAngle = -Math.PI / 2;
-    data.forEach((slice) => {
-      const sliceAngle = (slice.value / total) * Math.PI * 2;
-      const endAngle = startAngle + sliceAngle;
+  if (data.length === 0) return null;
 
-      // Darker shade for the extrusion side
-      const darken = darkenColor(slice.color, 0.4);
-      ctx.fillStyle = darken;
-      ctx.beginPath();
-      ctx.moveTo(cx + radius * Math.cos(startAngle), cy + radius * Math.sin(startAngle));
-      ctx.arc(cx, cy, radius, startAngle, endAngle);
-      ctx.lineTo(cx + radius * Math.cos(endAngle), cy + depth + radius * Math.sin(endAngle));
-      ctx.arc(cx, cy + depth, radius, endAngle, startAngle, true);
-      ctx.closePath();
-      ctx.fill();
+  const innerR = size * 0.22;
+  const outerR = size * 0.38;
 
-      startAngle = endAngle;
-    });
-
-    // Draw bottom face (darker circle)
-    ctx.fillStyle = darkenColor('#ffffff', 0.3);
-    ctx.beginPath();
-    ctx.ellipse(cx, cy + depth, radius, radius * 0.42, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Draw bottom face segments
-    startAngle = -Math.PI / 2;
-    data.forEach((slice) => {
-      const sliceAngle = (slice.value / total) * Math.PI * 2;
-      const endAngle = startAngle + sliceAngle;
-      if (sliceAngle > 0.01) {
-        const darken = darkenColor(slice.color, 0.5);
-        ctx.fillStyle = darken;
-        ctx.beginPath();
-        ctx.moveTo(cx, cy + depth);
-        ctx.arc(cx, cy + depth, radius, startAngle, endAngle);
-        ctx.closePath();
-        ctx.fill();
-      }
-      startAngle = endAngle;
-    });
-
-    // Draw top face
-    startAngle = -Math.PI / 2;
-    data.forEach((slice) => {
-      const sliceAngle = (slice.value / total) * Math.PI * 2;
-      const endAngle = startAngle + sliceAngle;
-
-      if (sliceAngle > 0.01) {
-        // Slice body
-        ctx.fillStyle = slice.color;
-        ctx.beginPath();
-        ctx.moveTo(cx, cy);
-        ctx.arc(cx, cy, radius, startAngle, endAngle);
-        ctx.closePath();
-        ctx.fill();
-
-        // Slice border
-        ctx.strokeStyle = '#ffffff';
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-      }
-
-      startAngle = endAngle;
-    });
-
-    // Top highlight overlay for 3D feel
-    const grad = ctx.createRadialGradient(cx, cy - radius * 0.3, 0, cx, cy, radius);
-    grad.addColorStop(0, 'rgba(255,255,255,0.12)');
-    grad.addColorStop(0.7, 'rgba(255,255,255,0.03)');
-    grad.addColorStop(1, 'rgba(0,0,0,0.08)');
-    ctx.fillStyle = grad;
-    ctx.beginPath();
-    ctx.arc(cx, cy, radius, 0, Math.PI * 2);
-    ctx.fill();
-
-  }, [slices, size]);
-
-  return <canvas ref={canvasRef} style={{ display: 'block', margin: '0 auto' }} />;
-}
-
-function darkenColor(hex: string, amount: number): string {
-  const r = parseInt(hex.slice(1, 3), 16);
-  const g = parseInt(hex.slice(3, 5), 16);
-  const b = parseInt(hex.slice(5, 7), 16);
-  const f = 1 - amount;
-  return `rgb(${Math.round(r * f)},${Math.round(g * f)},${Math.round(b * f)})`;
+  return (
+    <div>
+      <ResponsiveContainer width="100%" height={size}>
+        <PieChart
+          onMouseMove={(data: any) => {
+            if (data && data.activeTooltipIndex !== undefined) {
+              setHoverIndex(data.activeTooltipIndex);
+            }
+          }}
+          onMouseLeave={() => setHoverIndex(null)}
+        >
+          <Pie
+            {...{
+              data,
+              cx: '50%',
+              cy: '50%',
+              innerRadius: innerR,
+              outerRadius: outerR,
+              dataKey: 'value',
+              activeIndex: hoverIndex ?? undefined,
+              activeShape: ActiveSector,
+              animationBegin: 0,
+              animationDuration: 400,
+            } as any}
+          >
+            {data.map((entry, i) => (
+              <Cell key={i} fill={entry.color} stroke="#fff" strokeWidth={1.5} />
+            ))}
+          </Pie>
+          <Tooltip content={<CustomTooltip />} />
+        </PieChart>
+      </ResponsiveContainer>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 14px', justifyContent: 'center', marginTop: 8 }}>
+        {data.map((d, i) => (
+          <span
+            key={d.label}
+            style={{ fontSize: 12, color: '#6b7280', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5 }}
+            onMouseEnter={() => setHoverIndex(i)}
+            onMouseLeave={() => setHoverIndex(null)}
+          >
+            <span style={{ display: 'inline-block', width: 10, height: 10, borderRadius: 2, background: d.color }} />
+            {d.label}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
 }
