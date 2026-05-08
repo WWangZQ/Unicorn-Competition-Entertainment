@@ -1,0 +1,24 @@
+:root {
+  --bg: #1a1a1a;
+  --bg-card: #252525;
+  --bg-card-hover: #2a2a2a;
+  --border: #333;
+  --border-focus: #d97706;
+  --accent: #d97706;
+  --accent-hover: #f59e0b;
+  --text: #e5e5e5;
+  --text-muted: #9ca3af;
+  --text-weak: #6b7280;
+
+  font: 15px/1.6 system-ui, -apple-system, sans-serif;
+  color-scheme: dark;
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+body { margin: 0; }
+
+#root {
+  min-height: 100vh;
+}
