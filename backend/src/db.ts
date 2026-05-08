@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -141,7 +142,6 @@ export function upsertPersonality(p: PersonalityRow): void {
 }
 
 // Identity & device linking
-import crypto from 'node:crypto';
 
 function hashPassword(password: string): string {
   return crypto.createHash('sha256').update('kgti_salt_' + password).digest('hex');
