@@ -12,12 +12,7 @@ export default function Header() {
         </Link>
         <nav className="nav">
           {isAdmin ? (
-            <>
-              <Link to="/admin/questions" className="nav-link">题目</Link>
-              <Link to="/admin/personalities" className="nav-link">人格</Link>
-              <Link to="/admin/stats" className="nav-link">统计</Link>
-              <Link to="/" className="nav-link nav-link--exit">← 返回</Link>
-            </>
+            <Link to="/" className="nav-link nav-link--exit">← 返回首页</Link>
           ) : (
             <Link to="/admin" className="nav-link nav-link--subtle">管理</Link>
           )}
