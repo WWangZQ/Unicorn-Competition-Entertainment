@@ -1,8 +1,11 @@
+import { useNavigate } from 'react-router-dom';
 import { MODELS } from '../data/dimensions';
 import { personalities, specialPersonalities } from '../data/personalities';
 import PersonalityCard from '../components/PersonalityCard';
 
 export default function GalleryPage() {
+  const navigate = useNavigate();
+
   // Group personalities by model
   const grouped = MODELS.map((m) => {
     const dimIds = m.dims as readonly string[];
@@ -25,7 +28,11 @@ export default function GalleryPage() {
           </h2>
           <div className="gallery-grid">
             {group.members.map((p) => (
-              <PersonalityCard key={p.code} personality={p} />
+              <PersonalityCard
+                key={p.code}
+                personality={p}
+                onClick={() => navigate(`/types/${p.code}`)}
+              />
             ))}
           </div>
         </section>

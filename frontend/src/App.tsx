@@ -4,6 +4,7 @@ import HomePage from './pages/HomePage';
 import QuizPage from './pages/QuizPage';
 import ResultPage from './pages/ResultPage';
 import GalleryPage from './pages/GalleryPage';
+import PersonalityDetailPage from './pages/PersonalityDetailPage';
 import AdminLayout from './pages/admin/AdminLayout';
 import QuestionManager from './pages/admin/QuestionManager';
 import PersonalityManager from './pages/admin/PersonalityManager';
@@ -20,6 +21,7 @@ export default function App() {
           <Route path="/quiz" element={<QuizPage />} />
           <Route path="/result" element={<ResultPage />} />
           <Route path="/gallery" element={<GalleryPage />} />
+          <Route path="/types/:code" element={<PersonalityDetailPage />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<QuestionManager />} />
             <Route path="questions" element={<QuestionManager />} />

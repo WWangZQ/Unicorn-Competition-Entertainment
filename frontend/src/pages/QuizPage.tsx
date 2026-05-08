@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { questions, hiddenQuestions } from '../data/questions';
 import { computeResult } from '../utils/scoring';
@@ -7,10 +7,21 @@ import { submitResult } from '../utils/api';
 import ProgressBar from '../components/ProgressBar';
 import QuestionCard from '../components/QuestionCard';
 
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 type Phase = 'hidden' | 'main' | 'done';
 
 export default function QuizPage() {
   const navigate = useNavigate();
+  const shuffledHidden = useMemo(() => shuffle(hiddenQuestions), []);
+  const shuffledMain = useMemo(() => shuffle(questions), []);
   const [phase, setPhase] = useState<Phase>('hidden');
   const [hiddenIndex, setHiddenIndex] = useState(0);
   const [mainIndex, setMainIndex] = useState(0);
@@ -24,12 +35,12 @@ export default function QuizPage() {
 
   const handleHiddenSelect = (index: number) => {
     setSelected(index);
-    const q = hiddenQuestions[hiddenIndex];
+    const q = shuffledHidden[hiddenIndex];
     const newAnswers = { ...hiddenAnswers, [q.id]: index };
     setHiddenAnswers(newAnswers);
 
     setTimeout(() => {
-      if (hiddenIndex < hiddenQuestions.length - 1) {
+      if (hiddenIndex < shuffledHidden.length - 1) {
         setHiddenIndex(hiddenIndex + 1);
       } else {
         setPhase('main');
@@ -39,12 +50,12 @@ export default function QuizPage() {
 
   const handleMainSelect = (index: number) => {
     setSelected(index);
-    const q = questions[mainIndex];
+    const q = shuffledMain[mainIndex];
     const newAnswers = { ...mainAnswers, [q.id]: index };
     setMainAnswers(newAnswers);
 
     setTimeout(() => {
-      if (mainIndex < questions.length - 1) {
+      if (mainIndex < shuffledMain.length - 1) {
         setMainIndex(mainIndex + 1);
       } else {
         // Done
@@ -70,11 +81,11 @@ export default function QuizPage() {
 
   const currentQuestion =
     phase === 'hidden'
-      ? hiddenQuestions[hiddenIndex]
-      : questions[mainIndex];
+      ? shuffledHidden[hiddenIndex]
+      : shuffledMain[mainIndex];
 
-  const totalSteps = hiddenQuestions.length + questions.length;
-  const currentStep = phase === 'hidden' ? hiddenIndex + 1 : hiddenQuestions.length + mainIndex + 1;
+  const totalSteps = shuffledHidden.length + shuffledMain.length;
+  const currentStep = phase === 'hidden' ? hiddenIndex + 1 : shuffledHidden.length + mainIndex + 1;
 
   return (
     <div className="page quiz-page">
@@ -97,7 +108,7 @@ export default function QuizPage() {
             className="btn btn--ghost"
             onClick={() => {
               setMainIndex(mainIndex - 1);
-              setSelected(mainAnswers[questions[mainIndex - 1]?.id] ?? null);
+              setSelected(mainAnswers[shuffledMain[mainIndex - 1]?.id] ?? null);
             }}
           >
             ← 上一题

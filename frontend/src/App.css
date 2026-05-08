@@ -131,17 +131,25 @@ a:hover { color: var(--accent-hover); }
 
 .text-muted { color: var(--text-muted); font-size: 14px; }
 
+/* ===== Eyebrow ===== */
+.eyebrow {
+  font-size: 13px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+
 /* ===== Hero (Home) ===== */
 .hero {
   text-align: center;
-  padding: 64px 0 48px;
+  padding: 48px 0 32px;
 }
 
 .hero-title {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 20px;
+  gap: 4px;
+  margin-bottom: 16px;
 }
 
 .hero-brand {
@@ -153,17 +161,16 @@ a:hover { color: var(--accent-hover); }
 }
 
 .hero-sub {
-  font-size: 16px;
+  font-size: 20px;
   color: var(--text-muted);
   font-weight: 400;
-  letter-spacing: 2px;
 }
 
 .hero-desc {
   color: var(--text-muted);
   font-size: 15px;
   line-height: 1.8;
-  margin-bottom: 32px;
+  margin-bottom: 28px;
 }
 
 .hero-actions {
@@ -174,7 +181,7 @@ a:hover { color: var(--accent-hover); }
 }
 
 .hero-stats {
-  margin-top: 32px;
+  margin-top: 24px;
   font-size: 13px;
   color: var(--text-weak);
   display: flex;
@@ -189,6 +196,176 @@ a:hover { color: var(--accent-hover); }
   gap: 8px;
   justify-content: center;
   align-items: center;
+}
+
+/* ===== Hero Grid ===== */
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 32px;
+  text-align: left;
+}
+
+.mini-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 20px;
+}
+
+.mini-panel h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.mini-panel ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mini-panel li {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ===== Homepage Types Section ===== */
+.types-section {
+  margin-top: 48px;
+}
+
+.types-title-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.types-title-link:hover { color: var(--accent); }
+
+.types-title {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.types-title-arrow {
+  font-size: 18px;
+  color: var(--text-muted);
+}
+
+.types-subtitle {
+  color: var(--text-muted);
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+
+.types-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+/* ===== FAQ ===== */
+.faq-section {
+  margin-top: 56px;
+}
+
+.faq-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.faq-item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.faq-item summary {
+  padding: 16px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  list-style: none;
+}
+
+.faq-item summary::-webkit-details-marker { display: none; }
+
+.faq-item summary:hover {
+  background: var(--bg);
+}
+
+.faq-item[open] summary {
+  border-bottom: 1px solid var(--border);
+}
+
+.faq-item p {
+  padding: 16px 20px;
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* ===== Personality Detail Page ===== */
+.pd-header {
+  text-align: center;
+  padding: 32px 0 24px;
+}
+
+.pd-code {
+  font-family: var(--font-mono);
+  font-size: 48px;
+  font-weight: 800;
+  color: var(--accent);
+  letter-spacing: 4px;
+  margin-bottom: 8px;
+}
+
+.pd-code--special {
+  color: var(--text-muted);
+}
+
+.pd-name {
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.pd-tagline {
+  color: var(--text-muted);
+  font-size: 16px;
+  font-style: italic;
+  margin-bottom: 12px;
+}
+
+.pd-model {
+  font-size: 13px;
+  color: var(--text-weak);
+}
+
+.pd-profile {
+  margin-top: 32px;
+}
+
+.pd-back {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 40px;
 }
 
 /* ===== Buttons ===== */
@@ -827,11 +1004,15 @@ a:hover { color: var(--accent-hover); }
 @media (max-width: 640px) {
   .main { padding: 16px 12px 48px; }
 
+  .hero { padding: 32px 0 24px; }
+
   .hero-brand { font-size: 36px; letter-spacing: 2px; }
 
-  .hero { padding: 40px 0 32px; }
+  .hero-sub { font-size: 17px; }
 
   .hero-actions { flex-direction: column; align-items: center; }
+
+  .hero-grid { grid-template-columns: 1fr; }
 
   .nickname-input-wrap { flex-direction: column; width: 100%; }
 
@@ -843,7 +1024,11 @@ a:hover { color: var(--accent-hover); }
 
   .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
 
+  .types-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+
   .result-code { font-size: 36px; }
 
   .dim-info { min-width: 90px; }
+
+  .pd-code { font-size: 36px; }
 }
