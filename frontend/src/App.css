@@ -41,7 +41,7 @@ a:hover { color: var(--accent-hover); }
 
 .main {
   flex: 1;
-  max-width: 860px;
+  max-width: 960px;
   width: 100%;
   margin: 0 auto;
   padding: 24px 16px 64px;
@@ -57,7 +57,7 @@ a:hover { color: var(--accent-hover); }
 }
 
 .header-inner {
-  max-width: 860px;
+  max-width: 960px;
   margin: 0 auto;
   padding: 0 16px;
   height: 52px;
@@ -267,8 +267,8 @@ a:hover { color: var(--accent-hover); }
 
 .types-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 16px;
 }
 
 /* ===== FAQ ===== */
@@ -961,8 +961,8 @@ a:hover { color: var(--accent-hover); }
 
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 16px;
 }
 
 /* ===== Admin ===== */
@@ -1125,9 +1125,9 @@ a:hover { color: var(--accent-hover); }
 
   .question-text { font-size: 16px; }
 
-  .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+  .gallery-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
 
-  .types-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  .types-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
 
   .result-code { font-size: 36px; }
 
