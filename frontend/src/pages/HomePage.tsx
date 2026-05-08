@@ -1,14 +1,32 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { saveNickname, getNickname } from '../utils/storage';
+import { saveNickname, getNickname, getHistory } from '../utils/storage';
 import { personalities } from '../data/personalities';
 import { MODELS } from '../data/dimensions';
+import { getStats, type PersonalityStat } from '../utils/api';
 import PersonalityCard from '../components/PersonalityCard';
 
 export default function HomePage() {
   const navigate = useNavigate();
   const [nickname, setNickname] = useState(getNickname() ?? '');
   const [showInput, setShowInput] = useState(false);
+  const [hotList, setHotList] = useState<PersonalityStat[]>([]);
+
+  useEffect(() => {
+    getStats()
+      .then((s) => setHotList(s.personalityDistribution.slice(0, 10)))
+      .catch(() => {
+        // Fallback to local
+        const map = new Map<string, { code: string; name: string; count: number }>();
+        getHistory().forEach((entry) => {
+          const code = entry.personality?.code ?? entry.specialCode ?? '????';
+          const name = entry.personality?.name ?? entry.specialName ?? '未知';
+          const e = map.get(code);
+          e ? e.count++ : map.set(code, { code, name, count: 1 });
+        });
+        setHotList([...map.values()].sort((a, b) => b.count - a.count).slice(0, 10));
+      });
+  }, []);
 
   const handleStart = () => {
     if (nickname.trim()) {
@@ -137,6 +155,35 @@ export default function HomePage() {
           </details>
         </div>
       </section>
+
+      {/* Popularity ranking */}
+      {hotList.length > 0 && (
+        <section className="faq-section">
+          <h2 className="faq-title">人格热度榜</h2>
+          <div className="chart-list">
+            {hotList.map((item, i) => {
+              const maxCount = hotList[0]?.count ?? 1;
+              const barWidth = (item.count / maxCount) * 100;
+              return (
+                <div key={item.code} className="chart-row" style={{ cursor: 'pointer' }} onClick={() => navigate(`/types/${item.code}`)}>
+                  <div className="chart-rank">{i + 1}</div>
+                  <div className="chart-label">
+                    <span className="chart-code">{item.code}</span>
+                    <span className="chart-name">{item.name}</span>
+                  </div>
+                  <div className="chart-bar-wrap">
+                    <div
+                      className={`chart-bar ${i < 3 ? 'chart-bar--hot' : ''}`}
+                      style={{ width: `${Math.max(barWidth, 3)}%` }}
+                    />
+                  </div>
+                  <div className="chart-count">{item.count}</div>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
     </div>
   );
 }

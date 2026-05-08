@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
-import { getStats, type StatsData } from '../../utils/api';
+import { useState, useEffect, useMemo } from 'react';
+import { getStats, type StatsData, type PersonalityStat } from '../../utils/api';
 import { getHistory } from '../../utils/storage';
+import { personalities, specialPersonalities } from '../../data/personalities';
 
 export default function StatsPage() {
   const [stats, setStats] = useState<StatsData | null>(null);
@@ -14,66 +15,77 @@ export default function StatsPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  // Merge backend stats with local history for fallback
+  const distribution = useMemo(() => {
+    if (stats?.personalityDistribution?.length) return stats.personalityDistribution;
+
+    // Fallback: aggregate from local history
+    const map = new Map<string, { code: string; name: string; count: number }>();
+    localHistory.forEach((entry) => {
+      const code = entry.personality?.code ?? entry.specialCode ?? '????';
+      const name = entry.personality?.name ?? entry.specialName ?? '未知';
+      const existing = map.get(code);
+      if (existing) {
+        existing.count++;
+      } else {
+        map.set(code, { code, name, count: 1 });
+      }
+    });
+    // Fill in missing personalities with 0
+    [...personalities, ...specialPersonalities].forEach((p) => {
+      if (!map.has(p.code)) {
+        map.set(p.code, { code: p.code, name: p.name, count: 0 });
+      }
+    });
+    return [...map.values()].sort((a, b) => b.count - a.count);
+  }, [stats, localHistory]);
+
+  const maxCount = Math.max(...distribution.map((d) => d.count), 1);
+
   return (
     <div className="admin-section">
-      <h2 className="section-title">统计数据</h2>
+      <h2 className="section-title">数据统计</h2>
 
       {loading ? (
         <p className="text-muted">加载中...</p>
-      ) : stats ? (
-        <div className="stats-grid">
-          <div className="stat-card">
-            <div className="stat-value">{stats.totalParticipants}</div>
-            <div className="stat-label">总参与人数</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-value">{stats.personalityDistribution?.length ?? 0}</div>
-            <div className="stat-label">已触发人格种类</div>
-          </div>
-        </div>
-      ) : (
-        <p className="text-muted">后端未连接，使用本地数据</p>
-      )}
+      ) : null}
 
-      {stats?.personalityDistribution && stats.personalityDistribution.length > 0 && (
-        <div className="admin-list" style={{ marginTop: 16 }}>
-          <h3 className="section-title">人格分布</h3>
-          {stats.personalityDistribution
-            .sort((a, b) => b.count - a.count)
-            .map((p) => (
-              <div key={p.code} className="admin-item">
-                <div className="admin-item-header">
-                  <span className="admin-item-id">{p.code}</span>
-                  <span className="admin-item-dim">{p.name}</span>
-                  <span className="stat-count">{p.count} 人</span>
-                </div>
-              </div>
-            ))}
+      <div className="stats-grid">
+        <div className="stat-card">
+          <div className="stat-value">{stats?.totalParticipants ?? localHistory.length}</div>
+          <div className="stat-label">总参与人数</div>
         </div>
-      )}
+        <div className="stat-card">
+          <div className="stat-value">{distribution.filter((d) => d.count > 0).length}</div>
+          <div className="stat-label">已触发人格种类</div>
+        </div>
+      </div>
 
-      <h3 className="section-title" style={{ marginTop: 24 }}>本地测试记录</h3>
-      {localHistory.length === 0 ? (
-        <p className="text-muted">暂无本地记录</p>
-      ) : (
-        <div className="admin-list">
-          {localHistory.slice(0, 10).map((entry, i) => (
-            <div key={i} className="admin-item">
-              <div className="admin-item-header">
-                <span className="admin-item-id">
-                  {entry.personality?.code ?? entry.specialCode}
-                </span>
-                <span className="admin-item-dim">
-                  {entry.personality?.name ?? entry.specialName}
-                </span>
-                <span className="stat-count">
-                  {new Date(entry.timestamp).toLocaleString('zh-CN')}
-                </span>
+      <h3 className="section-title" style={{ marginTop: 24 }}>人格热度分布</h3>
+      {!stats && <p className="text-muted" style={{ marginBottom: 16 }}>后端未连接，使用本地数据</p>}
+
+      <div className="chart-list">
+        {distribution.map((item: PersonalityStat, i: number) => {
+          const barWidth = (item.count / maxCount) * 100;
+          const isHot = i < 5 && item.count > 0;
+          return (
+            <div key={item.code} className="chart-row">
+              <div className="chart-rank">{i + 1}</div>
+              <div className="chart-label">
+                <span className="chart-code">{item.code}</span>
+                <span className="chart-name">{item.name}</span>
               </div>
+              <div className="chart-bar-wrap">
+                <div
+                  className={`chart-bar ${isHot ? 'chart-bar--hot' : ''}`}
+                  style={{ width: `${Math.max(barWidth, item.count > 0 ? 2 : 0)}%` }}
+                />
+              </div>
+              <div className="chart-count">{item.count}</div>
             </div>
-          ))}
-        </div>
-      )}
+          );
+        })}
+      </div>
     </div>
   );
 }

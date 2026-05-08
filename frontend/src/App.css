@@ -1130,6 +1130,74 @@ a:hover { color: var(--accent-hover); }
   font-size: 16px;
 }
 
+/* ===== Chart / Distribution ===== */
+.chart-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.chart-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.chart-rank {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-weak);
+  min-width: 24px;
+  text-align: center;
+}
+
+.chart-label {
+  min-width: 140px;
+  display: flex;
+  flex-direction: column;
+}
+
+.chart-code {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.chart-name {
+  font-size: 11px;
+  color: var(--text-weak);
+}
+
+.chart-bar-wrap {
+  flex: 1;
+  height: 20px;
+  background: var(--bg);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.chart-bar {
+  height: 100%;
+  background: var(--border);
+  border-radius: 4px;
+  transition: width 600ms ease;
+  min-width: 0;
+}
+
+.chart-bar--hot {
+  background: var(--accent);
+}
+
+.chart-count {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  min-width: 36px;
+  text-align: right;
+}
+
 /* ===== Stats ===== */
 .stats-grid {
   display: grid;
