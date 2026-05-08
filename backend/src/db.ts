@@ -226,6 +226,11 @@ export function getIdentityDevices(identityId: string): { identity: IdentityRow 
   return { identity, devices, resultCount };
 }
 
+export function readResultsByIdentity(deviceIds: string[]): Result[] {
+  const db = read();
+  return db.results.filter((r) => deviceIds.includes(r.device_id));
+}
+
 export function updateDeviceActivity(identityId: string, deviceId: string): void {
   const db = read();
   const link = db.deviceLinks.find((d) => d.identity_id === identityId && d.device_id === deviceId);

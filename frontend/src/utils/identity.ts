@@ -80,6 +80,23 @@ export async function checkDeviceLinked(): Promise<{ linked: boolean; identityId
   return res.json();
 }
 
+export interface IdentityResult {
+  id: number;
+  device_id: string;
+  nickname: string;
+  personality_code: string;
+  personality_name: string;
+  dimension_scores: string;
+  created_at: string;
+}
+
+export async function fetchIdentityResults(identityId: string): Promise<IdentityResult[]> {
+  const res = await fetch(`/api/identity/${identityId}/results`);
+  if (!res.ok) return [];
+  const data = await res.json();
+  return data.results ?? [];
+}
+
 export function validatePassword(pw: string): string | null {
   if (pw.length < 6) return '密码至少6位';
   if (!/[a-zA-Z]/.test(pw)) return '密码需包含字母';

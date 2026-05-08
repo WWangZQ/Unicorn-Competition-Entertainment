@@ -5,6 +5,7 @@ import {
   linkDevice,
   getIdentityDevices,
   getIdentityByDevice,
+  readResultsByIdentity,
 } from '../db.js';
 
 const router = Router();
@@ -85,6 +86,22 @@ router.get('/:id', (req, res) => {
       lastActiveAt: d.last_active_at,
     })),
   });
+});
+
+// Get all results for an identity (cross-device)
+router.get('/:id/results', (req, res) => {
+  const { id } = req.params;
+  const info = getIdentityDevices(id);
+
+  if (!info.identity) {
+    res.status(404).json({ error: '身份不存在' });
+    return;
+  }
+
+  const deviceIds = new Set(info.devices.map((d) => d.device_id));
+  const results = readResultsByIdentity([...deviceIds]);
+
+  res.json({ results });
 });
 
 // Check if device has linked identity

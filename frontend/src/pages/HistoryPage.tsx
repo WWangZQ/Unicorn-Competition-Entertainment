@@ -1,5 +1,7 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getHistory } from '../utils/storage';
+import { getIdentityId, fetchIdentityResults } from '../utils/identity';
 import type { HistoryEntry } from '../utils/storage';
 
 function formatDate(ts: number): string {
@@ -9,7 +11,62 @@ function formatDate(ts: number): string {
 
 export default function HistoryPage() {
   const navigate = useNavigate();
-  const history = getHistory();
+  const [allEntries, setAllEntries] = useState<HistoryEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const local = getHistory();
+
+    const identityId = getIdentityId();
+    if (!identityId) {
+      setAllEntries(local);
+      setLoading(false);
+      return;
+    }
+
+    // Fetch cross-device results from backend
+    fetchIdentityResults(identityId)
+      .then((remote) => {
+        // Convert remote results to HistoryEntry format
+        const remoteEntries: HistoryEntry[] = remote.map((r) => {
+          let dimensionScores: Record<string, number> = {};
+          try { dimensionScores = JSON.parse(r.dimension_scores); } catch {}
+          return {
+            nickname: r.nickname,
+            personality: {
+              code: r.personality_code,
+              name: r.personality_name,
+              tagline: '',
+              description: '',
+              dimension: 'S1',
+              model: '',
+              profile: dimensionScores,
+            },
+            similarity: 0,
+            dimensionScores,
+            specialCode: null,
+            specialName: null,
+            specialTagline: null,
+            timestamp: new Date(r.created_at).getTime(),
+          };
+        });
+
+        // Merge: local + remote, deduplicate by code+timestamp
+        const merged = [...local];
+        const localKeys = new Set(local.map((e) => `${e.personality?.code ?? e.specialCode}_${e.timestamp}`));
+        remoteEntries.forEach((re) => {
+          const key = `${re.personality?.code ?? re.specialCode}_${re.timestamp}`;
+          if (!localKeys.has(key)) {
+            merged.push(re);
+          }
+        });
+
+        merged.sort((a, b) => b.timestamp - a.timestamp);
+        setAllEntries(merged);
+      })
+      .catch(() => setAllEntries(local))
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <div className="page">
@@ -19,16 +76,18 @@ export default function HistoryPage() {
 
       <h1 className="page-title">我的测试记录</h1>
       <p className="page-sub">
-        共 {history.length} 条记录
+        共 {allEntries.length} 条记录{getIdentityId() ? '（含关联设备）' : ''}
       </p>
 
-      {history.length === 0 ? (
+      {loading ? (
+        <p className="text-muted" style={{ textAlign: 'center', padding: 48 }}>加载中...</p>
+      ) : allEntries.length === 0 ? (
         <div className="text-muted" style={{ textAlign: 'center', padding: 48 }}>
           还没有测试记录，<button className="btn btn--primary" onClick={() => navigate('/quiz')}>开始测试</button>
         </div>
       ) : (
         <div className="history-list">
-          {history.map((entry: HistoryEntry, i: number) => {
+          {allEntries.map((entry: HistoryEntry, i: number) => {
             const code = entry.personality?.code ?? entry.specialCode ?? '????';
             const name = entry.personality?.name ?? entry.specialName ?? '未知';
             const isSpecial = entry.specialCode !== null;
@@ -43,7 +102,7 @@ export default function HistoryPage() {
                   </div>
                 </div>
                 <div className="history-item-right">
-                  {entry.similarity != null && (
+                  {entry.similarity != null && entry.similarity > 0 && (
                     <span className="history-sim">匹配 {entry.similarity}%</span>
                   )}
                   <span className="history-arrow">→</span>
