@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { getStats, type StatsData, type PersonalityStat } from '../../utils/api';
 import { getHistory } from '../../utils/storage';
 import { personalities, specialPersonalities } from '../../data/personalities';
+import Pie3D from '../../components/Pie3D';
 
 export default function StatsPage() {
   const [stats, setStats] = useState<StatsData | null>(null);
@@ -63,6 +64,37 @@ export default function StatsPage() {
 
       <h3 className="section-title" style={{ marginTop: 24 }}>人格热度分布</h3>
       {!stats && <p className="text-muted" style={{ marginBottom: 16 }}>后端未连接，使用本地数据</p>}
+
+      {distribution.some((d) => d.count > 0) ? (
+        <div style={{ marginBottom: 24 }}>
+          <Pie3D
+            slices={distribution
+              .filter((d) => d.count > 0)
+              .map((d) => ({ label: d.code, value: d.count }))}
+            size={420}
+          />
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center', marginTop: 16, maxWidth: 600, margin: '16px auto 0' }}>
+            {distribution
+              .filter((d) => d.count > 0)
+              .map((d, i) => (
+                <span key={d.code} style={{ fontSize: 12, color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
+                  <span style={{
+                    display: 'inline-block', width: 10, height: 10, borderRadius: 2,
+                    background: ['#d97706', '#ea580c', '#f59e0b', '#eab308', '#84cc16',
+                      '#22c55e', '#10b981', '#14b8a6', '#06b6d4', '#0ea5e9',
+                      '#3b82f6', '#6366f1', '#8b5cf6', '#a855f7', '#c084fc',
+                      '#e879f9', '#f472b6', '#fb7185', '#f43f5e', '#e11d48',
+                      '#dc2626', '#b91c1c', '#991b1b', '#7f1d1d', '#ef4444',
+                      '#f97316', '#fb923c'][i % 27],
+                  }} />
+                  {d.code} ({d.count})
+                </span>
+              ))}
+          </div>
+        </div>
+      ) : (
+        <p className="text-muted" style={{ marginBottom: 24 }}>暂无数据</p>
+      )}
 
       <div className="chart-list">
         {distribution.map((item: PersonalityStat, i: number) => {
