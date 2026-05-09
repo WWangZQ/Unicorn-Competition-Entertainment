@@ -1,5 +1,14 @@
 import type { QuizResult } from './scoring';
 
+// Sanitize string to prevent XSS - remove HTML tags and escape entities
+function sanitizeString(str: string): string {
+  return str
+    .replace(/[<>]/g, '') // Remove angle brackets
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .slice(0, 50); // Limit length
+}
+
 const KEYS = {
   NICKNAME: 'kgti_nickname',
   MAIN_ANSWERS: 'kgti_main_answers',
@@ -9,7 +18,7 @@ const KEYS = {
 } as const;
 
 export function saveNickname(name: string): void {
-  localStorage.setItem(KEYS.NICKNAME, name);
+  localStorage.setItem(KEYS.NICKNAME, sanitizeString(name));
 }
 
 export function getNickname(): string | null {

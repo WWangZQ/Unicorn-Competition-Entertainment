@@ -124,7 +124,19 @@ function QuestionForm({ question, isNew, onSave, onCancel }: {
 
   const handleSubmit = () => {
     if (!id.trim() || !text.trim()) return;
-    onSave({ id: id.trim(), text: text.trim(), dimension, options });
+    if (text.length < 5) {
+      alert('题目内容至少5个字');
+      return;
+    }
+    if (text.length > 500) {
+      alert('题目内容最多500字');
+      return;
+    }
+    if (!options.every(o => o.text.trim().length >= 1)) {
+      alert('每个选项必须有内容');
+      return;
+    }
+    onSave({ id: id.trim().slice(0, 30), text: text.trim().slice(0, 500), dimension, options: options.filter(o => o.text.trim()) });
   };
 
   return (
@@ -133,11 +145,11 @@ function QuestionForm({ question, isNew, onSave, onCancel }: {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 600 }}>
         <label style={{ fontSize: 13, color: 'var(--text-muted)' }}>
           ID
-          <input className="input" style={{ width: '100%', marginTop: 4 }} value={id} onChange={(e) => setId(e.target.value)} placeholder="q1" />
+          <input className="input" style={{ width: '100%', marginTop: 4 }} value={id} onChange={(e) => setId(e.target.value)} placeholder="q1" maxLength={30} />
         </label>
         <label style={{ fontSize: 13, color: 'var(--text-muted)' }}>
           题目文本
-          <textarea className="input" style={{ width: '100%', marginTop: 4, minHeight: 60, resize: 'vertical' }} value={text} onChange={(e) => setText(e.target.value)} placeholder="题目内容" />
+          <textarea className="input" style={{ width: '100%', marginTop: 4, minHeight: 60, resize: 'vertical' }} value={text} onChange={(e) => setText(e.target.value)} placeholder="题目内容" maxLength={500} />
         </label>
         <label style={{ fontSize: 13, color: 'var(--text-muted)' }}>
           维度

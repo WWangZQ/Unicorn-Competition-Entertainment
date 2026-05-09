@@ -12,6 +12,17 @@ export default function HomePage() {
   const [showInput, setShowInput] = useState(false);
   const [hotList, setHotList] = useState<PersonalityStat[]>([]);
 
+  // Validate nickname - only allow alphanumeric, Chinese, spaces, and some punctuation
+  const validateNickname = (value: string): string => {
+    return value
+      .replace(/[<>\"\'&]/g, '') // Remove potentially dangerous characters
+      .slice(0, 50); // Limit length
+  };
+
+  const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNickname(validateNickname(e.target.value));
+  };
+
   useEffect(() => {
     getStats()
       .then((s) => setHotList(s.personalityDistribution.slice(0, 10)))
@@ -72,7 +83,8 @@ export default function HomePage() {
               type="text"
               placeholder="输入你的昵称（可选）"
               value={nickname}
-              onChange={(e) => setNickname(e.target.value)}
+              onChange={handleNicknameChange}
+              maxLength={50}
               onKeyDown={(e) => e.key === 'Enter' && handleStart()}
               autoFocus
             />

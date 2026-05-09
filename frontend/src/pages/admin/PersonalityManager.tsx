@@ -108,7 +108,15 @@ function ProfileEditor({ personality, onSave, onCancel }: {
   const models = ['自我模型', '情感模型', '态度模型', '行动驱力模型', '社交模型'];
 
   const handleSave = () => {
-    onSave({ code: code.trim(), name: name.trim(), tagline: tagline.trim(), description: description.trim(), model, dimension: homeDim, profile });
+    if (!name.trim()) {
+      alert('名称不能为空');
+      return;
+    }
+    if (name.length > 50 || tagline.length > 100) {
+      alert('名称最多50字，标语最多100字');
+      return;
+    }
+    onSave({ code: code.trim().slice(0, 20), name: name.trim().slice(0, 50), tagline: tagline.trim().slice(0, 100), description: description.trim().slice(0, 500), model, dimension: homeDim, profile });
   };
 
   return (
@@ -177,7 +185,15 @@ function SpecialEditor({ special, onSave, onCancel }: {
   const [trigger, setTrigger] = useState(special.trigger);
 
   const handleSave = () => {
-    onSave({ code: code.trim(), name: name.trim(), tagline: tagline.trim(), trigger: trigger.trim() });
+    if (!name.trim() || !code.trim()) {
+      alert('代码和名称不能为空');
+      return;
+    }
+    if (name.length > 50 || tagline.length > 100 || trigger.length > 100) {
+      alert('内容超出长度限制');
+      return;
+    }
+    onSave({ code: code.trim().slice(0, 20), name: name.trim().slice(0, 50), tagline: tagline.trim().slice(0, 100), trigger: trigger.trim().slice(0, 100) });
   };
 
   return (

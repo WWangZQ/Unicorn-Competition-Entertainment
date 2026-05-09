@@ -10,27 +10,44 @@ import {
 
 const router = Router();
 
+// Input validation helpers
+function isValidPassword(pw: string): boolean {
+  return typeof pw === 'string' && pw.length >= 6 && pw.length <= 32;
+}
+
+function isValidLinkCode(code: string): boolean {
+  return typeof code === 'string' && /^[A-Za-z0-9]{8}$/.test(code);
+}
+
+function isValidDeviceId(id: string): boolean {
+  return typeof id === 'string' && id.length >= 16 && id.length <= 64 && /^[a-f0-9]+$/.test(id);
+}
+
+function isValidIdentityId(id: string): boolean {
+  return typeof id === 'string' && id.length === 36;
+}
+
 // Create new identity with link code + password
 router.post('/init', (req, res) => {
   const { password, deviceId } = req.body;
 
-  if (!password || typeof password !== 'string' || password.length < 6) {
-    res.status(400).json({ error: '密码至少6位' });
+  if (!isValidPassword(password)) {
+    res.status(400).json({ error: '密码需6-32位' });
     return;
   }
   if (!/[a-zA-Z]/.test(password) || !/[0-9]/.test(password)) {
     res.status(400).json({ error: '密码需包含字母和数字' });
     return;
   }
-  if (!deviceId) {
-    res.status(400).json({ error: '缺少设备标识' });
+  if (!isValidDeviceId(deviceId)) {
+    res.status(400).json({ error: '无效的设备标识' });
     return;
   }
 
   const linkCode = generateLinkCode();
   const ip = req.ip || req.socket.remoteAddress || 'unknown';
   const ua = req.headers['user-agent'] || 'unknown';
-  const identity = createIdentity(linkCode, password, deviceId, ip, ua);
+  const identity = createIdentity(linkCode, password, deviceId, ip, ua.slice(0, 200));
 
   res.json({
     identityId: identity.id,
@@ -42,14 +59,22 @@ router.post('/init', (req, res) => {
 router.post('/link', (req, res) => {
   const { linkCode, password, deviceId } = req.body;
 
-  if (!linkCode || !password || !deviceId) {
-    res.status(400).json({ error: '缺少参数' });
+  if (!isValidLinkCode(linkCode)) {
+    res.status(400).json({ error: '连接码格式不正确' });
+    return;
+  }
+  if (!isValidPassword(password)) {
+    res.status(400).json({ error: '密码需6-32位' });
+    return;
+  }
+  if (!isValidDeviceId(deviceId)) {
+    res.status(400).json({ error: '无效的设备标识' });
     return;
   }
 
   const ip = req.ip || req.socket.remoteAddress || 'unknown';
   const ua = req.headers['user-agent'] || 'unknown';
-  const identity = linkDevice(linkCode, password, deviceId, ip, ua);
+  const identity = linkDevice(linkCode, password, deviceId, ip, ua.slice(0, 200));
 
   if (!identity) {
     res.status(401).json({ error: '连接码或密码错误' });
@@ -65,6 +90,12 @@ router.post('/link', (req, res) => {
 // Get identity info (devices, link history)
 router.get('/:id', (req, res) => {
   const { id } = req.params;
+
+  if (!isValidIdentityId(id)) {
+    res.status(400).json({ error: '无效的身份ID' });
+    return;
+  }
+
   const info = getIdentityDevices(id);
 
   if (!info.identity) {
@@ -91,6 +122,12 @@ router.get('/:id', (req, res) => {
 // Get all results for an identity (cross-device)
 router.get('/:id/results', (req, res) => {
   const { id } = req.params;
+
+  if (!isValidIdentityId(id)) {
+    res.status(400).json({ error: '无效的身份ID' });
+    return;
+  }
+
   const info = getIdentityDevices(id);
 
   if (!info.identity) {
@@ -106,7 +143,14 @@ router.get('/:id/results', (req, res) => {
 
 // Check if device has linked identity
 router.get('/check/:deviceId', (req, res) => {
-  const identity = getIdentityByDevice(req.params.deviceId);
+  const deviceId = req.params.deviceId;
+
+  if (!isValidDeviceId(deviceId)) {
+    res.status(400).json({ error: '无效的设备标识' });
+    return;
+  }
+
+  const identity = getIdentityByDevice(deviceId);
   res.json({
     linked: !!identity,
     identityId: identity?.id ?? null,

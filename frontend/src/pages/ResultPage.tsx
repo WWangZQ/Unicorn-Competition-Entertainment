@@ -6,10 +6,17 @@ import { ALL_DIMENSION_IDS, DIMENSIONS, scoreToLevel } from '../data/dimensions'
 import ShareCard from '../components/ShareCard';
 import type { DimensionId } from '../data/dimensions';
 
+// Escape HTML to prevent XSS
+function escapeHtml(str: string): string {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
 export default function ResultPage() {
   const navigate = useNavigate();
   const result = getLatestResult();
-  const nickname = getNickname() ?? '匿名';
+  const nickname = escapeHtml(getNickname() ?? '匿名');
 
   useEffect(() => {
     if (!result) {
